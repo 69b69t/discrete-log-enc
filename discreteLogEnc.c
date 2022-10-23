@@ -94,8 +94,11 @@ uint32_t main()
 
     if(choiceBuffer[0] == 'e')
     {
-        printStrHex(crypt(key, rawTextBuffer, strLen(rawTextBuffer)), strLen(rawTextBuffer));
+        //had to add this evilness so some devices actually print "00" in the output
+        uint8_t outputLen = strLen(rawTextBuffer);
+        printStrHex(crypt(key, rawTextBuffer, strLen(rawTextBuffer)), outputLen);
     }
+    
     if(choiceBuffer[0] == 'd')
     {
         uint32_t originalLen = strLen(rawTextBuffer)/2;
