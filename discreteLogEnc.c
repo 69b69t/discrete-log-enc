@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <gmp.h>
+#define BUFFERLEN 4096
 
 uint32_t strLen(uint8_t* str)
 {
@@ -46,10 +47,10 @@ uint8_t hexChar(uint8_t value)
     return 0xff;
 }
 
-uint8_t* textToBin(uint8_t* raw)
+uint8_t* textToBin(uint8_t* raw, uint8_t* outBuffer)
 {
     uint32_t outLen = strLen(raw)/2;
-    uint8_t* outBuffer = calloc(outLen, 1);
+    //uint8_t* outBuffer = calloc(outLen, 1);
     for(uint32_t i = 0; i < outLen; i++)
     {
         outBuffer[i] = (hexChar(raw[2*i]) << 4) + hexChar(raw[2*i + 1]);
@@ -80,29 +81,32 @@ uint32_t main()
 {
     printf("Key:");
     mpz_t key;
-    uint8_t keyBuffer[4096] = {0};
-    fgets(keyBuffer, 4096, stdin);
+    uint8_t keyBuffer[BUFFERLEN] = {0};
+    fgets(keyBuffer, BUFFERLEN, stdin);
     mpz_init_set_str(key, keyBuffer, 10);
 
     printf("Text:");
-    uint8_t rawTextBuffer[4096] = {0};
-    fgets(rawTextBuffer, 4096, stdin);
+    uint8_t rawTextBuffer[BUFFERLEN] = {0};
+    fgets(rawTextBuffer, BUFFERLEN, stdin);
 
     printf("Encrypt or decrypt?(e/d):");
     uint8_t choiceBuffer[2] = {0};
     fgets(choiceBuffer, 2, stdin);
 
+    uint32_t inputLen = strLen(rawTextBuffer);
+
     if(choiceBuffer[0] == 'e')
     {
         //had to add this evilness so some devices actually print "00" in the output
-        uint8_t outputLen = strLen(rawTextBuffer);
-        printStrHex(crypt(key, rawTextBuffer, strLen(rawTextBuffer)), outputLen);
+        uint8_t* ciphertext = crypt(key, rawTextBuffer, inputLen);
+        printStrHex(ciphertext, inputLen);
     }
     
     if(choiceBuffer[0] == 'd')
     {
-        uint32_t originalLen = strLen(rawTextBuffer)/2;
-        uint8_t* rawBinary = textToBin(rawTextBuffer);
+        uint32_t originalLen = inputLen/2;
+        uint8_t outBuffer[BUFFERLEN/2] = {0};
+        uint8_t* rawBinary = textToBin(rawTextBuffer, outBuffer);
         uint8_t* originalText = crypt(key, rawBinary, originalLen);
         printf("%s", originalText);
     }
