@@ -83,7 +83,7 @@ uint32_t main()
     mpz_t key;
     uint8_t keyBuffer[BUFFERLEN] = {0};
     fgets(keyBuffer, BUFFERLEN, stdin);
-    mpz_init_set_str(key, keyBuffer, 10);
+    mpz_init_set_str(key, keyBuffer, 62);
 
     printf("Text:");
     uint8_t rawTextBuffer[BUFFERLEN] = {0};
