@@ -6,7 +6,7 @@ int main()
     mpz_t base;
     mpz_t modulo;
     mpz_init_set_ui(base, 2);
-    mpz_init_set_str(modulo, "e519335ded99dcdc65434a265d999baf", 16);
+    mpz_init_set_str(modulo, "e13b01bbe6e08cdf", 16);
     mpz_t pkey;
     mpz_init(pkey);
     FILE* random = fopen("/dev/random", "r");
